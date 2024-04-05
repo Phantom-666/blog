@@ -1,5 +1,4 @@
 "use client"
-import NavBar from "@/app/components/Navbar"
 import axios from "axios"
 import { useState } from "react"
 
@@ -36,8 +35,6 @@ const Reg = () => {
 
   return (
     <>
-      <NavBar />
-
       <div
         className="
         bg-gray-200

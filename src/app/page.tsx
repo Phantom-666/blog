@@ -1,9 +1,6 @@
-import NavBar from "./components/Navbar"
-
 export default function Home() {
   return (
     <>
-      <NavBar />
       <div
         className="
         h-screen

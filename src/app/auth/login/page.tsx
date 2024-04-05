@@ -1,7 +1,10 @@
 "use client"
-import NavBar from "@/app/components/Navbar"
+import { login } from "@/app/lib/auth"
+import { loginAction } from "@/app/redux/login/loginActions"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" })
@@ -15,7 +18,11 @@ const Login = () => {
     setForm((prev) => ({ ...prev, password }))
   }
 
-  const login = async () => {
+  const { push } = useRouter()
+
+  const dispath = useDispatch()
+
+  const fetchLogin = async () => {
     try {
       setRegStatus(null)
       setRegError(null)
@@ -23,6 +30,13 @@ const Login = () => {
       const res = await axios.post("/api/login", form)
 
       setRegStatus(res.data.status)
+
+      const obj = { email: res.data.email, username: res.data.username }
+
+      login(obj)
+      dispath(loginAction(obj))
+
+      push("/")
     } catch (err: any) {
       setRegError(err.response.data.error)
     }
@@ -30,8 +44,6 @@ const Login = () => {
 
   return (
     <>
-      <NavBar />
-
       <div
         className="
         bg-gray-200
@@ -87,7 +99,7 @@ const Login = () => {
               <></>
             )}
             <button
-              onClick={login}
+              onClick={fetchLogin}
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >

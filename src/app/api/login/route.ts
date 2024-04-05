@@ -2,7 +2,7 @@ import dbConnect from "@/app/lib/connectDb"
 import User from "@/app/models/User"
 
 type userType = {
-  username: string
+  email: string
   password: string
 }
 
@@ -19,5 +19,8 @@ export async function POST(request: Request) {
 
   // send token
 
-  return Response.json(user)
+  return Response.json(
+    { username: user.username, email: user.email },
+    { status: 200 }
+  )
 }
