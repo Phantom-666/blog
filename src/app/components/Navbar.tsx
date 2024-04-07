@@ -50,7 +50,6 @@ const NavBar = () => {
   useEffect(() => {
     const fun = async () => {
       const session = await getSession()
-      console.log("session", session)
 
       if (session) {
         dispath(loginAction(session.user))

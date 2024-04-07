@@ -20,7 +20,12 @@ export async function POST(request: Request) {
   // send token
 
   return Response.json(
-    { username: user.username, email: user.email },
+    {
+      username: user.username,
+      email: user.email,
+      image: user.image,
+      addName: user.addName,
+    },
     { status: 200 }
   )
 }

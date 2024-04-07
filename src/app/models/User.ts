@@ -4,6 +4,8 @@ export interface IUser extends Document {
   username: string
   email: string
   password: string
+  image: string
+  addName: string
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -14,10 +16,17 @@ const userSchema: Schema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+  },
+  addName: {
+    type: String,
   },
 })
 

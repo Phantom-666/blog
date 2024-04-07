@@ -22,15 +22,21 @@ export async function decrypt(input: string): Promise<any> {
 type IUserData = {
   email: string
   username: string
+  image: string
+  addName: string
+}
+
+export async function updateSession(data: any) {
+  const session = await encrypt({ user: data })
+
+  cookies().set("session", session, { httpOnly: true })
 }
 
 export async function login(data: IUserData) {
-  const user = { email: data.email, username: data.username }
+  // const user = { email: data.email, username: data.username }
 
   //   const expires = new Date(Date.now() + 10 * 1000)
-  const session = await encrypt({ user })
-
-  cookies().set("session", session, { httpOnly: true })
+  await updateSession(data)
 }
 
 export async function logout() {

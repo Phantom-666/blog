@@ -11,6 +11,8 @@ export default function Home() {
         <div>
           <div className="bg-white p-8 rounded max-w-md w-full">
             <h2 className="text-2xl  mb-4">WELCOME</h2>
+
+            <h2>Add updates about app</h2>
           </div>
         </div>
       </div>

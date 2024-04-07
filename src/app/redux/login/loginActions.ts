@@ -1,5 +1,5 @@
 "use client"
-import { LOGIN, LOGOUT } from "./loginTypes"
+import { LOGIN, LOGOUT, UPDATE_STATE } from "./loginTypes"
 
 const loginAction = (payload: any) => {
   return {
@@ -12,4 +12,11 @@ const logoutActions = () => {
   return { type: LOGOUT }
 }
 
-export { loginAction, logoutActions }
+const updateActions = (payload: any) => {
+  return {
+    type: UPDATE_STATE,
+    payload,
+  }
+}
+
+export { loginAction, logoutActions, updateActions }

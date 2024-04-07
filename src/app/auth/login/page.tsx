@@ -31,7 +31,7 @@ const Login = () => {
 
       setRegStatus(res.data.status)
 
-      const obj = { email: res.data.email, username: res.data.username }
+      const obj = res.data
 
       login(obj)
       dispath(loginAction(obj))
