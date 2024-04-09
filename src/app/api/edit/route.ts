@@ -1,6 +1,8 @@
+import dbConnect from "@/app/lib/connectDb"
 import User from "@/app/models/User"
 
 export const POST = async (request: Request) => {
+  await dbConnect()
   const body = await request.json()
 
   const user = await User.findOne({ email: body.session.user.email })
@@ -16,7 +18,15 @@ export const POST = async (request: Request) => {
   //username
   if (form.username !== user.username) {
     status = true
-    user.username = form.username
+
+    if (form.username.trim().split(" ").length > 1) {
+      return Response.json(
+        { status: "Username cannot contain spaces" },
+        { status: 400 }
+      )
+    }
+
+    user.username = form.username.toLowerCase()
   }
 
   //addName

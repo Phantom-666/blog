@@ -2,8 +2,10 @@
 
 import { useSelector } from "react-redux"
 import { RootState } from "../redux"
-import { useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import axios from "axios"
+import Post from "./Post"
 
 const EditButton = () => (
   <svg
@@ -92,42 +94,96 @@ const FriendList = () => {
   )
 }
 
-const AddPost = () => {
+const AddPost = ({
+  email,
+  setFetchedPosts,
+}: {
+  email: string
+  setFetchedPosts: any
+}) => {
+  const [post, setPost] = useState("")
+
+  const addPost = async () => {
+    try {
+      const res = await axios.post("/api/post", { email, post })
+
+      setFetchedPosts((prev: any) => [res.data.post, ...prev])
+
+      // console.log("res", res)
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
+
   return (
-    <form>
+    <div>
       <textarea
+        value={post}
         className="w-full h-24 resize-none border rounded-md p-2 mb-4"
         placeholder="What's on your mind?"
+        onChange={(e) => setPost(e.target.value)}
       ></textarea>
       <button
-        type="submit"
+        onClick={addPost}
         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
       >
         Post
       </button>
-    </form>
+    </div>
   )
 }
 
-const Posts = () => {
+const fetchPosts = async (username: string, setFetchedPosts: any) => {
+  const res = await axios.get(`/api/post/${username}`)
+  console.log("res.data.posts", res.data.posts)
+
+  setFetchedPosts(res.data.posts)
+}
+
+const Posts = ({
+  username,
+  fetchedPosts,
+  setFetchedPosts,
+}: {
+  username: string
+  fetchedPosts: any
+  setFetchedPosts: any
+}) => {
+  useEffect(() => {
+    if (username) {
+      fetchPosts(username, setFetchedPosts)
+    }
+  }, [username])
+
   return (
     <div className="mt-4">
-      <div className="border-b border-gray-200 py-4">
-        <p>
-          This is a sample post. Lorem ipsum dolor sit amet consectetur
-          adipisicing elit. Dolorum, neque?
-        </p>
-        <div className="items-center mt-2">
-          <button className="text-gray-500 hover:text-blue-500">Like</button>
-          <button className="text-gray-500 hover:text-blue-500 ml-5 ">
-            Comment
-          </button>
-          <button className="text-gray-500 hover:text-blue-500 ml-5 ">
-            Share
-          </button>
-        </div>
-      </div>
+      {fetchedPosts.map((p: any, index: number) => (
+        <Post {...p} key={index} setFetchedPosts={setFetchedPosts} />
+      ))}
     </div>
+  )
+}
+
+const BlogPosts = ({
+  email,
+  username,
+}: {
+  email: string
+  username: string
+}) => {
+  const [fetchedPosts, setFetchedPosts] = useState([])
+
+  return (
+    <>
+      <AddPost email={email} setFetchedPosts={setFetchedPosts} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Posts
+          fetchedPosts={fetchedPosts}
+          setFetchedPosts={setFetchedPosts}
+          username={username}
+        />
+      </Suspense>
+    </>
   )
 }
 
@@ -147,8 +203,7 @@ const Blog = () => {
 
           <div className="col-span-2">
             <div className="bg-white p-4 shadow rounded">
-              <AddPost />
-              <Posts />
+              <BlogPosts email={user.email} username={user.username} />
             </div>
           </div>
         </div>
