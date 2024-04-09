@@ -105,7 +105,11 @@ const AddPost = ({
 
   const addPost = async () => {
     try {
-      const res = await axios.post("/api/post", { email, post })
+      const res = await axios.post("/api/post/add", { email, post })
+
+      setPost("")
+
+      res.data.post.likes = 0
 
       setFetchedPosts((prev: any) => [res.data.post, ...prev])
 
@@ -135,7 +139,10 @@ const AddPost = ({
 
 const fetchPosts = async (username: string, setFetchedPosts: any) => {
   const res = await axios.get(`/api/post/${username}`)
-  console.log("res.data.posts", res.data.posts)
+
+  for (let i = 0; i < res.data.posts.length; ++i) {
+    res.data.posts[i].likes = res.data.likesArray[i]
+  }
 
   setFetchedPosts(res.data.posts)
 }
@@ -158,7 +165,12 @@ const Posts = ({
   return (
     <div className="mt-4">
       {fetchedPosts.map((p: any, index: number) => (
-        <Post {...p} key={index} setFetchedPosts={setFetchedPosts} />
+        <Post
+          {...p}
+          key={index}
+          index={index}
+          setFetchedPosts={setFetchedPosts}
+        />
       ))}
     </div>
   )

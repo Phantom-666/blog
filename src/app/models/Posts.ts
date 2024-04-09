@@ -5,11 +5,6 @@ export interface IPost extends Document {
   createdAt: Date
 }
 
-// export interface ILikes extends Document {
-//   likes : number
-//   postId : mongoose.types
-// }
-
 const postSchema: Schema = new mongoose.Schema({
   text: {
     type: String,

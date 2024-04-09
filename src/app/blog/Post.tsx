@@ -7,6 +7,8 @@ type PostProps = {
   createdAt: string
   _id: string
   setFetchedPosts: any
+  likes: number
+  index: number
 }
 
 const Post = (props: PostProps) => {
@@ -18,14 +20,25 @@ const Post = (props: PostProps) => {
       username,
     })
 
-    console.log("res", res.data)
-
     props.setFetchedPosts((prev: any) =>
       prev.filter((p: any) => p._id !== props._id)
     )
   }
 
   const { text, createdAt } = props
+
+  const likePost = async () => {
+    const res = await axios.post("/api/post/like", {
+      username,
+      postId: props._id,
+    })
+
+    props.setFetchedPosts((prev: any) => {
+      prev[props.index].likes = res.data.counter
+
+      return [...prev]
+    })
+  }
 
   return (
     <div className="border-b border-gray-200 py-4 relative">
@@ -39,12 +52,11 @@ const Post = (props: PostProps) => {
       <br />
       <p>{createdAt}</p>
       <div className="items-center mt-2">
-        <button className="text-gray-500 hover:text-blue-500">0 Like</button>
-        <button className="text-gray-500 hover:text-blue-500 ml-5">
-          Comment
-        </button>
-        <button className="text-gray-500 hover:text-blue-500 ml-5">
-          Share
+        <button
+          onClick={likePost}
+          className="text-gray-500 hover:text-blue-500"
+        >
+          {props.likes} Like
         </button>
       </div>
     </div>

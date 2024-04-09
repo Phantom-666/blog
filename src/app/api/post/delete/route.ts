@@ -1,3 +1,4 @@
+import Likes from "@/app/models/Likes"
 import User from "@/app/models/User"
 
 export const POST = async (request: Request) => {
@@ -18,6 +19,10 @@ export const POST = async (request: Request) => {
   }
 
   user.posts = newPosts
+
+  //likes
+
+  await Likes.deleteOne({ postId: body.id })
 
   await user.save()
 
