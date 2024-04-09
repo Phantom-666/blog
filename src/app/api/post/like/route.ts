@@ -14,15 +14,21 @@ export const POST = async (request: Request) => {
 
   const indexToDelete = likeSchema.usersWhoLiked.indexOf(user._id)
 
+  let likedByYou = false
+
   if (indexToDelete !== -1) {
     likeSchema.likes -= 1
     likeSchema.usersWhoLiked.splice(indexToDelete, 1)
   } else {
     likeSchema.likes += 1
     likeSchema.usersWhoLiked.push(user._id)
+    likedByYou = true
   }
 
   await likeSchema.save()
 
-  return Response.json({ counter: likeSchema.likes }, { status: 200 })
+  return Response.json(
+    { counter: likeSchema.likes, likedByYou },
+    { status: 200 }
+  )
 }

@@ -112,8 +112,6 @@ const AddPost = ({
       res.data.post.likes = 0
 
       setFetchedPosts((prev: any) => [res.data.post, ...prev])
-
-      // console.log("res", res)
     } catch (error) {
       console.log("error", error)
     }
@@ -142,6 +140,7 @@ const fetchPosts = async (username: string, setFetchedPosts: any) => {
 
   for (let i = 0; i < res.data.posts.length; ++i) {
     res.data.posts[i].likes = res.data.likesArray[i]
+    res.data.posts[i].likedByYou = res.data.likedByYou[i]
   }
 
   setFetchedPosts(res.data.posts)

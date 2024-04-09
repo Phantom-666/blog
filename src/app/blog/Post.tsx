@@ -9,6 +9,7 @@ type PostProps = {
   setFetchedPosts: any
   likes: number
   index: number
+  likedByYou: boolean
 }
 
 const Post = (props: PostProps) => {
@@ -36,6 +37,8 @@ const Post = (props: PostProps) => {
     props.setFetchedPosts((prev: any) => {
       prev[props.index].likes = res.data.counter
 
+      prev[props.index].likedByYou = res.data.likedByYou
+
       return [...prev]
     })
   }
@@ -54,7 +57,11 @@ const Post = (props: PostProps) => {
       <div className="items-center mt-2">
         <button
           onClick={likePost}
-          className="text-gray-500 hover:text-blue-500"
+          className={
+            props.likedByYou
+              ? "text-blue-500 hover:text-red-600"
+              : "text-gray-500 hover:text-blue-500"
+          }
         >
           {props.likes} Like
         </button>
