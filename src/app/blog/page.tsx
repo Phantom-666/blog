@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import Post from "./Post"
-import { Spinner } from "@radix-ui/themes"
+import { Spinner, Table } from "@radix-ui/themes"
 
 const EditButton = () => (
   <svg
@@ -75,21 +75,91 @@ const ProfileComponent = ({
   )
 }
 
-const FriendList = () => {
+const SubscribersList = () => {
+  const [subscribers, setSubscribers] = useState({
+    subscribers: [],
+    subscribedTo: [],
+    length: 0,
+  })
+
+  useEffect(() => {
+    const fetchSubscribers = async () => {
+      try {
+        const res = await axios.get("/api/subscribers/get")
+        console.log("res.data", res.data)
+
+        let length = 0
+
+        if (res.data.subs.subscribers.length > length)
+          length = res.data.subs.subscribers.length
+
+        if (res.data.subs.subscribedTo.length > length)
+          length = res.data.subs.subscribedTo.length
+
+        console.log("length", length)
+
+        res.data.subs.length = length
+
+        console.log("res.data.subs", res.data.subs)
+
+        setSubscribers(res.data.subs)
+      } catch (error) {
+        console.log("error", error)
+      }
+    }
+    fetchSubscribers()
+  }, [])
+
+  const { push } = useRouter()
+
   return (
     <div className="col-span-1">
       <div className="bg-white p-4 shadow rounded">
         <h3 className="text-lg font-semibold mb-4">Friends</h3>
-        <ul>
-          <li className="flex items-center space-x-2">
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Friend"
-              className="w-10 h-10 rounded-full"
-            />
-            <span className="font-semibold">Friend Name</span>
-          </li>
-        </ul>
+        <Table.Root>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell>Subscribers</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Subscribed to</Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+
+          <Table.Body>
+            {new Array(subscribers.length).fill("").map((s, i) => {
+              return (
+                <Table.Row key={i}>
+                  <Table.RowHeaderCell
+                    onClick={
+                      subscribers.subscribers[i] &&
+                      (() => push(`/blog/${subscribers.subscribers[i]}`))
+                    }
+                    className={
+                      subscribers.subscribers[i] &&
+                      "hover:cursor-pointer hover:text-blue-600"
+                    }
+                  >
+                    {subscribers.subscribers[i]}
+                  </Table.RowHeaderCell>
+
+                  <Table.Cell></Table.Cell>
+                  <Table.Cell
+                    onClick={
+                      subscribers.subscribedTo[i] &&
+                      (() => push(`/blog/${subscribers.subscribedTo[i]}`))
+                    }
+                    className={
+                      subscribers.subscribedTo[i] &&
+                      "hover:cursor-pointer hover:text-blue-600"
+                    }
+                  >
+                    {subscribers.subscribedTo[i]}
+                  </Table.Cell>
+                </Table.Row>
+              )
+            })}
+          </Table.Body>
+        </Table.Root>
       </div>
     </div>
   )
@@ -211,7 +281,7 @@ const Blog = () => {
       />
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-3 gap-4">
-          <FriendList />
+          <SubscribersList />
 
           <div className="col-span-2">
             <div className="bg-white p-4 shadow rounded">

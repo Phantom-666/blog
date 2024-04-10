@@ -1,6 +1,8 @@
+import dbConnect from "@/app/lib/connectDb"
 import User from "@/app/models/User"
 
 export const POST = async (request: Request) => {
+  await dbConnect()
   const { input } = await request.json()
 
   const users = await User.find({

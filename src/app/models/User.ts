@@ -8,6 +8,8 @@ export interface IUser extends Document {
   image: string
   addName: string
   posts: IPost[]
+  subscribers: mongoose.Schema.Types.ObjectId[]
+  subscribedTo: mongoose.Schema.Types.ObjectId[]
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -34,6 +36,14 @@ const userSchema: Schema = new mongoose.Schema({
 
   posts: {
     type: [postSchema],
+    default: [],
+  },
+  subscribers: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: [],
+  },
+  subscribedTo: {
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
   },
 })

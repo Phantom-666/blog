@@ -1,7 +1,9 @@
+import dbConnect from "@/app/lib/connectDb"
 import Likes from "@/app/models/Likes"
 import User from "@/app/models/User"
 
 export const POST = async (request: Request) => {
+  await dbConnect()
   const { postId, username } = await request.json()
 
   const likeSchema = await Likes.findOne({ postId })
