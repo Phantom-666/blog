@@ -44,16 +44,16 @@ const Post = (props: PostProps) => {
   }
 
   return (
-    <div className="border-b border-gray-200 py-4 relative">
+    <div className="border-b border-t border-gray-200 py-4 relative  px-3">
       <button
         onClick={deletePost}
-        className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+        className="absolute top-1 right-0 text-red-500 hover:text-red-700"
       >
         Delete
       </button>
-      <p>{text}</p>
+      <p className="text-lg mt-2">{text}</p>
       <br />
-      <p>{createdAt}</p>
+      <p className="text-xs">{createdAt}</p>
       <div className="items-center mt-2">
         <button
           onClick={likePost}

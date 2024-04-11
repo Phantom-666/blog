@@ -86,7 +86,6 @@ const SubscribersList = () => {
     const fetchSubscribers = async () => {
       try {
         const res = await axios.get("/api/subscribers/get")
-        console.log("res.data", res.data)
 
         let length = 0
 
@@ -96,11 +95,7 @@ const SubscribersList = () => {
         if (res.data.subs.subscribedTo.length > length)
           length = res.data.subs.subscribedTo.length
 
-        console.log("length", length)
-
         res.data.subs.length = length
-
-        console.log("res.data.subs", res.data.subs)
 
         setSubscribers(res.data.subs)
       } catch (error) {
@@ -281,7 +276,9 @@ const Blog = () => {
       />
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-3 gap-4">
-          <SubscribersList />
+          <Suspense fallback={<Spinner />}>
+            <SubscribersList />
+          </Suspense>
 
           <div className="col-span-2">
             <div className="bg-white p-4 shadow rounded">
