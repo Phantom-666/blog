@@ -40,7 +40,6 @@ const NavBar = () => {
   ]
 
   const tabsUser = [
-    { name: "Main", path: "/" },
     { name: "My Blog", path: "/blog" },
     { name: "Find people", path: "/find" },
     { name: "Shop", path: "/shop" },

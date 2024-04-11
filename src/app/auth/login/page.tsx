@@ -20,7 +20,7 @@ const Login = () => {
 
   const { push } = useRouter()
 
-  const dispath = useDispatch()
+  const dispatch = useDispatch()
 
   const fetchLogin = async () => {
     try {
@@ -34,9 +34,9 @@ const Login = () => {
       const obj = res.data
 
       login(obj)
-      dispath(loginAction(obj))
+      dispatch(loginAction(obj))
 
-      push("/")
+      push("/blog")
     } catch (err: any) {
       setRegError(err.response.data.error)
     }
