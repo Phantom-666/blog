@@ -33,10 +33,9 @@ const Post = (props: PostProps) => {
   }
 
   return (
-    <div className="border-b border-gray-200 py-4 relative">
-      <p>{text}</p>
-      <br />
-      <p>{createdAt}</p>
+    <div className="border-b border-t border-gray-200 py-4 relative px-3">
+      <p className="text-lg">{text}</p>
+      <p className="text-xs mt-3">{createdAt}</p>
       <div className="items-center mt-2">
         <button
           onClick={likePost}

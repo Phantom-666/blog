@@ -12,7 +12,7 @@ type ProfileProps = {
   username: string
   profileImage: string | null
   addName: string | null
-  mainUsername: string
+
   subscribers: string[]
   setUser: any
 }
@@ -21,7 +21,7 @@ const ProfileComponent = ({
   username,
   profileImage,
   addName,
-  mainUsername,
+
   subscribers,
   setUser,
 }: ProfileProps) => {
@@ -40,6 +40,7 @@ const ProfileComponent = ({
       console.log("err", error)
     }
   }
+  const mainUsername = useSelector((state: RootState) => state.user.username)
 
   const isSubcribed = subscribers.indexOf(mainUsername) !== -1
 
@@ -143,17 +144,6 @@ const SubscribersList = ({
             })}
           </Table.Body>
         </Table.Root>
-        {/* <ul>
-          {subscribers.map((s, i) => (
-            <li
-              key={i}
-              className="flex items-center space-x-2 hover:cursor-pointer hover:text-red-600"
-              onClick={() => push(`/blog/${s}`)}
-            >
-              <span className="font-semibold">{s}</span>
-            </li>
-          ))}
-        </ul> */}
       </div>
     </div>
   )
@@ -263,12 +253,9 @@ const Blog = ({ params }: { params: { username: string } }) => {
     fetchUser()
   }, [username])
 
-  const mainUsername = useSelector((state: RootState) => state.user.username)
-
   return (
     <>
       <ProfileComponent
-        mainUsername={mainUsername}
         username={user.username}
         profileImage={user.image}
         addName={user.addName}

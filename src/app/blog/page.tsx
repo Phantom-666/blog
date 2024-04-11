@@ -1,44 +1,18 @@
 "use client"
 
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../redux"
 import { Suspense, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import Post from "./Post"
 import { Spinner, Table } from "@radix-ui/themes"
+import { PostType, addPostRedux, setPosts } from "../redux/posts/postsActions"
+import { EditButton } from "./EditButton"
 
-const EditButton = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-white cursor-pointer"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path
-      fillRule="evenodd"
-      d="M10 12a2 2 0 100-4 2 2 0 000 4z"
-      clipRule="evenodd"
-    />
-    <path
-      fillRule="evenodd"
-      d="M3.586 15.414a2 2 0 010-2.828l12-12a2 2 0 012.828 2.828l-12 12a2 2 0 01-2.828 0z"
-      clipRule="evenodd"
-    />
-  </svg>
-)
+const ProfileComponent = () => {
+  const user = useSelector((state: RootState) => state.user)
 
-type ProfileProps = {
-  username: string
-  profileImage: string | null
-  addName: string | null
-}
-
-const ProfileComponent = ({
-  username,
-  profileImage,
-  addName,
-}: ProfileProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const { push } = useRouter()
@@ -50,8 +24,8 @@ const ProfileComponent = ({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           src={
-            profileImage
-              ? profileImage
+            user.image
+              ? user.image
               : "https://catherineasquithgallery.com/uploads/posts/2023-01/1674279507_catherineasquithgallery-com-p-kartinka-fonovaya-seraya-foto-124.jpg"
           }
           alt="Profile Picture"
@@ -65,11 +39,11 @@ const ProfileComponent = ({
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => push("/user/edit")}
           >
-            {username}
+            {user.username}
           </h2>
           {isHovered && <EditButton />}
         </div>
-        <p className="text-lg">{addName ? addName : "User"}</p>
+        <p className="text-lg">{user.addName ? user.addName : "User"}</p>
       </div>
     </section>
   )
@@ -160,14 +134,10 @@ const SubscribersList = () => {
   )
 }
 
-const AddPost = ({
-  email,
-  setFetchedPosts,
-}: {
-  email: string
-  setFetchedPosts: any
-}) => {
+const AddPost = ({ email }: { email: string }) => {
   const [post, setPost] = useState("")
+
+  const dispatch = useDispatch()
 
   const addPost = async () => {
     try {
@@ -177,7 +147,8 @@ const AddPost = ({
 
       res.data.post.likes = 0
 
-      setFetchedPosts((prev: any) => [res.data.post, ...prev])
+      //add to the top
+      dispatch(addPostRedux({ post: res.data.post }))
     } catch (error) {
       console.log("error", error)
     }
@@ -201,7 +172,7 @@ const AddPost = ({
   )
 }
 
-const fetchPosts = async (username: string, setFetchedPosts: any) => {
+const fetchPosts = async (username: string, dispatch: any) => {
   const res = await axios.get(`/api/post/${username}`)
 
   for (let i = 0; i < res.data.posts.length; ++i) {
@@ -209,71 +180,48 @@ const fetchPosts = async (username: string, setFetchedPosts: any) => {
     res.data.posts[i].likedByYou = res.data.likedByYou[i]
   }
 
-  setFetchedPosts(res.data.posts)
+  dispatch(setPosts({ posts: res.data.posts }))
 }
 
-const Posts = ({
-  username,
-  fetchedPosts,
-  setFetchedPosts,
-}: {
-  username: string
-  fetchedPosts: any
-  setFetchedPosts: any
-}) => {
+const Posts = ({ username }: { username: string }) => {
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (username) {
-      fetchPosts(username, setFetchedPosts)
+      fetchPosts(username, dispatch)
     }
   }, [username])
 
+  const posts = useSelector(
+    (state: { posts: { posts: PostType[] } }) => state.posts.posts
+  )
+
   return (
     <div className="mt-4">
-      {fetchedPosts.map((p: any, index: number) => (
-        <Post
-          {...p}
-          key={index}
-          index={index}
-          setFetchedPosts={setFetchedPosts}
-        />
+      {posts.map((p: any, index: number) => (
+        <Post {...p} key={index} index={index} />
       ))}
     </div>
   )
 }
 
-const BlogPosts = ({
-  email,
-  username,
-}: {
-  email: string
-  username: string
-}) => {
-  const [fetchedPosts, setFetchedPosts] = useState([])
+const BlogPosts = () => {
+  const user = useSelector((state: RootState) => state.user)
 
   return (
     <>
-      <AddPost email={email} setFetchedPosts={setFetchedPosts} />
+      <AddPost email={user.email} />
       <Suspense fallback={<Spinner />}>
-        <Posts
-          fetchedPosts={fetchedPosts}
-          setFetchedPosts={setFetchedPosts}
-          username={username}
-        />
+        <Posts username={user.username} />
       </Suspense>
     </>
   )
 }
 
 const Blog = () => {
-  const user = useSelector((state: RootState) => state.user)
-
   return (
     <>
-      <ProfileComponent
-        username={user.username}
-        profileImage={user.image}
-        addName={user.addName}
-      />
+      <ProfileComponent />
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-3 gap-4">
           <Suspense fallback={<Spinner />}>
@@ -282,7 +230,7 @@ const Blog = () => {
 
           <div className="col-span-2">
             <div className="bg-white p-4 shadow rounded">
-              <BlogPosts email={user.email} username={user.username} />
+              <BlogPosts />
             </div>
           </div>
         </div>

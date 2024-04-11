@@ -1,29 +1,33 @@
 import axios from "axios"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../redux"
+import { deletePostRedux, likePostRedux } from "../redux/posts/postsActions"
 
 type PostProps = {
   text: string
   createdAt: string
   _id: string
-  setFetchedPosts: any
   likes: number
   index: number
   likedByYou: boolean
 }
 
 const Post = (props: PostProps) => {
+  const dispatch = useDispatch()
+
   const username = useSelector((state: RootState) => state.user.username)
 
   const deletePost = async () => {
-    const res = await axios.post("/api/post/delete", {
-      id: props._id,
-      username,
-    })
+    try {
+      await axios.post("/api/post/delete", {
+        id: props._id,
+        username,
+      })
 
-    props.setFetchedPosts((prev: any) =>
-      prev.filter((p: any) => p._id !== props._id)
-    )
+      dispatch(deletePostRedux({ id: props._id }))
+    } catch (error) {
+      console.log("error", error)
+    }
   }
 
   const { text, createdAt } = props
@@ -34,17 +38,18 @@ const Post = (props: PostProps) => {
       postId: props._id,
     })
 
-    props.setFetchedPosts((prev: any) => {
-      prev[props.index].likes = res.data.counter
-
-      prev[props.index].likedByYou = res.data.likedByYou
-
-      return [...prev]
-    })
+    dispatch(
+      likePostRedux({
+        id: props._id,
+        index: props.index,
+        counter: res.data.counter,
+        likedByYou: res.data.likedByYou,
+      })
+    )
   }
 
   return (
-    <div className="border-b border-t border-gray-200 py-4 relative  px-3">
+    <div className="border-b border-t border-gray-200 py-4 relative px-3">
       <button
         onClick={deletePost}
         className="absolute top-1 right-0 text-red-500 hover:text-red-700"
@@ -52,8 +57,7 @@ const Post = (props: PostProps) => {
         Delete
       </button>
       <p className="text-lg mt-2">{text}</p>
-      <br />
-      <p className="text-xs">{createdAt}</p>
+      <p className="text-xs mt-3">{createdAt}</p>
       <div className="items-center mt-2">
         <button
           onClick={likePost}
