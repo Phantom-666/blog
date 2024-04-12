@@ -1,7 +1,9 @@
 import { PostType } from "./postsActions"
 import { ADD_POST, DELETE_POST, LIKE_POST, SET_POSTS } from "./postsTypes"
 
-const initialState: { posts: PostType[] } = { posts: [] }
+const initialState: { posts: PostType[] } = {
+  posts: [],
+}
 
 const postsReducer = (
   state = initialState,
@@ -47,6 +49,7 @@ const postsReducer = (
 
       return { posts: newPosts }
     }
+
     default:
       return state
   }

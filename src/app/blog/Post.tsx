@@ -41,7 +41,6 @@ const Post = (props: PostProps) => {
     dispatch(
       likePostRedux({
         id: props._id,
-        index: props.index,
         counter: res.data.counter,
         likedByYou: res.data.likedByYou,
       })

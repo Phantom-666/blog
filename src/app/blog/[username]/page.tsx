@@ -217,7 +217,9 @@ const Blog = ({ params }: { params: { username: string } }) => {
       <ProfileComponent />
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-3 gap-4">
-          <SubscribersList />
+          <Suspense fallback={<Spinner />}>
+            <SubscribersList />
+          </Suspense>
 
           <div className="col-span-2">
             <div className="bg-white p-4 shadow rounded">

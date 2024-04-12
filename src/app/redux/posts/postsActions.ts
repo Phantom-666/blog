@@ -8,6 +8,12 @@ export type PostType = {
   text: string
 }
 
+export type SubscribersType = {
+  subscribers: string[]
+  subscribedTo: string[]
+  length: number
+}
+
 type Payload = {
   posts: PostType[]
 }

@@ -42,7 +42,6 @@ const NavBar = () => {
   const tabsUser = [
     { name: "My Blog", path: "/blog" },
     { name: "Find people", path: "/find" },
-    { name: "Shop", path: "/shop" },
     { name: "Log out", path: "/auth/logout" },
   ]
 
