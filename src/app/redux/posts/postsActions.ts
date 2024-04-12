@@ -24,7 +24,6 @@ const deletePostRedux = (payload: { id: string }) => {
 }
 const likePostRedux = (payload: {
   id: string
-  index: number
   counter: number
   likedByYou: boolean
 }) => {

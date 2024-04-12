@@ -1,12 +1,12 @@
 import axios from "axios"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux"
+import { likePostRedux } from "@/app/redux/observer/observerActions"
 
 type PostProps = {
   text: string
   createdAt: string
   _id: string
-  setFetchedPosts: any
   likes: number
   index: number
   likedByYou: boolean
@@ -17,19 +17,25 @@ const Post = (props: PostProps) => {
 
   const { text, createdAt } = props
 
+  const dispatch = useDispatch()
+
   const likePost = async () => {
-    const res = await axios.post("/api/post/like", {
-      username,
-      postId: props._id,
-    })
+    try {
+      const res = await axios.post("/api/post/like", {
+        username,
+        postId: props._id,
+      })
 
-    props.setFetchedPosts((prev: any) => {
-      prev[props.index].likes = res.data.counter
-
-      prev[props.index].likedByYou = res.data.likedByYou
-
-      return [...prev]
-    })
+      dispatch(
+        likePostRedux({
+          id: props._id,
+          counter: res.data.counter,
+          likedByYou: res.data.likedByYou,
+        })
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
   }
 
   return (
