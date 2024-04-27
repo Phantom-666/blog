@@ -1,32 +1,16 @@
-import dbConnect from "@/app/lib/connectDb"
-import Likes from "@/app/models/Likes"
-import User from "@/app/models/User"
+import db from "../../../db/db"
+import { getSession } from "@/app/lib/auth"
 
 export const POST = async (request: Request) => {
-  await dbConnect()
-  const body = await request.json()
+  try {
+    await db.connect()
+    const body = await request.json()
+    const session = await getSession()
 
-  const user = await User.findOne({
-    username: body.username,
-  })
+    await db.deletePost(session.user.username, body.id)
 
-  if (!user) return Response.json({ status: "No such user" }, { status: 400 })
-
-  const newPosts = []
-
-  for (let post of user.posts) {
-    if (String(post._id) !== body.id) {
-      newPosts.push(post)
-    }
+    return Response.json({ status: "Deleted" }, { status: 200 })
+  } catch (error: any) {
+    Response.json({ status: error.message }, { status: 400 })
   }
-
-  user.posts = newPosts
-
-  //likes
-
-  await Likes.deleteOne({ postId: body.id })
-
-  await user.save()
-
-  return Response.json({ status: "Deleted" })
 }

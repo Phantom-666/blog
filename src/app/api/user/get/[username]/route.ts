@@ -1,30 +1,15 @@
-import dbConnect from "@/app/lib/connectDb"
-import User from "@/app/models/User"
+import db from "@/app/db/db"
 
 export const GET = async (request: Request) => {
-  await dbConnect()
-  const splitted = request.url.split("/")
-  const username = splitted[splitted.length - 1]
+  try {
+    await db.connect()
 
-  const user = await User.findOne({ username }).select(
-    "username image addName email subscribers subscribedTo"
-  )
+    const splitted = request.url.split("/")
+    const username = splitted[splitted.length - 1]
+    const response = await db.getSubscribers(username)
 
-  if (!user) return Response.json({ status: "No such user" }, { status: 400 })
-
-  const subs = []
-  const subscribedTo = []
-
-  for (let id of user.subscribers) {
-    const sub = await User.findById(id)
-
-    subs.push(sub.username)
+    return Response.json(response, { status: 200 })
+  } catch (error: any) {
+    return Response.json({ status: error.message }, { status: 400 })
   }
-
-  for (let id of user.subscribedTo) {
-    const sub = await User.findById(id)
-    subscribedTo.push(sub.username)
-  }
-
-  return Response.json({ user, subs, subscribedTo }, { status: 200 })
 }

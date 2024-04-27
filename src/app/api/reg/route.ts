@@ -1,5 +1,4 @@
-import dbConnect from "@/app/lib/connectDb"
-import User from "@/app/models/User"
+import db from "../../db/db"
 
 type userType = {
   username: string
@@ -8,7 +7,7 @@ type userType = {
 }
 
 export async function POST(request: Request) {
-  await dbConnect()
+  await db.connect()
 
   const data: userType = await request.json()
 
@@ -23,7 +22,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "No password" }, { status: 400 })
   }
 
-  await User.create({
+  await db.createUser({
     username: data.username,
     email: data.email,
     password: data.password,

@@ -1,13 +1,10 @@
-import dbConnect from "@/app/lib/connectDb"
-import User from "@/app/models/User"
+import db from "../../db/db"
 
 export const POST = async (request: Request) => {
-  await dbConnect()
+  await db.connect()
   const { input } = await request.json()
 
-  const users = await User.find({
-    username: { $regex: input, $options: "i" },
-  }).select("username")
+  const users = await db.findUsersByUsername(input)
 
   return Response.json({ users }, { status: 200 })
 }

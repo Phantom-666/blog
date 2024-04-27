@@ -1,24 +1,16 @@
-import dbConnect from "@/app/lib/connectDb"
-import User from "@/app/models/User"
-
-type userType = {
-  email: string
-  password: string
-}
+import { UserTypeWithEmail } from "@/app/db/types"
+import db from "../../db/db"
 
 export async function POST(request: Request) {
-  await dbConnect()
-
-  const data: userType = await request.json()
-
-  const user = await User.findOne(data)
+  await db.connect()
+  const data: UserTypeWithEmail = await request.json()
+  const user = await db.findOne(data)
 
   if (!user) {
     return Response.json({ error: "No such user" }, { status: 400 })
   }
 
-  // send token
-
+  // sending token
   return Response.json(
     {
       username: user.username,
