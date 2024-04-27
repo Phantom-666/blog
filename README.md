@@ -1,4 +1,6 @@
-Это Блог написанный на Nextjs, Redux, Mongodb, Tailwind, Radix
+Это Блог написанный на Nextjs, Redux, Mongodb, Tailwind, Radix, где реальзованна система регистрации и авторизации, написание постов, лайки и подписки
+
+![alt text](images/1.png)
 
 ## Getting Started
 
